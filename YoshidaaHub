@@ -1,0 +1,119 @@
+if _G.YoshidaaSpawnerBuilt then return end
+_G.YoshidaaSpawnerBuilt = true
+
+local Spawner = loadstring(game:HttpGet("https://raw.githubusercontent.com/ataturk123/GardenSpawner/refs/heads/main/Spawner.lua"))()
+
+local CoreGui = game:GetService("CoreGui")
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+
+-- GUI
+local gui = Instance.new("ScreenGui", CoreGui)
+gui.Name = "YoshidaaSpawnerGUI"
+gui.ResetOnSpawn = false
+
+local main = Instance.new("Frame", gui)
+main.Size = UDim2.new(0, 340, 0, 320)
+main.Position = UDim2.new(0.5, -170, 0.5, -160)
+main.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+main.BackgroundTransparency = 0.15
+main.BorderSizePixel = 0
+main.Active = true
+main.Draggable = true
+
+Instance.new("UICorner", main).CornerRadius = UDim.new(0, 16)
+
+local shadow = Instance.new("ImageLabel", main)
+shadow.AnchorPoint = Vector2.new(0.5, 0.5)
+shadow.Position = UDim2.new(0.5, 0, 0.5, 5)
+shadow.Size = UDim2.new(1, 40, 1, 40)
+shadow.BackgroundTransparency = 1
+shadow.Image = "rbxassetid://1316045217"
+shadow.ImageColor3 = Color3.fromRGB(0, 255, 128)
+shadow.ImageTransparency = 0.9
+shadow.ScaleType = Enum.ScaleType.Slice
+shadow.SliceCenter = Rect.new(10, 10, 118, 118)
+
+-- Title Bar
+local title = Instance.new("TextLabel", main)
+title.Size = UDim2.new(1, -50, 0, 45)
+title.Position = UDim2.new(0, 10, 0, 0)
+title.Text = "🌿 Yoshidaa Hub"
+title.TextColor3 = Color3.fromRGB(0, 255, 128)
+title.Font = Enum.Font.GothamBlack
+title.TextSize = 22
+title.TextXAlignment = Enum.TextXAlignment.Left
+title.BackgroundTransparency = 1
+
+-- Minimize Button
+local minimizeBtn = Instance.new("TextButton", main)
+minimizeBtn.Size = UDim2.new(0, 30, 0, 30)
+minimizeBtn.Position = UDim2.new(1, -40, 0, 8)
+minimizeBtn.Text = "-"
+minimizeBtn.Font = Enum.Font.GothamBold
+minimizeBtn.TextSize = 20
+minimizeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+minimizeBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+Instance.new("UICorner", minimizeBtn).CornerRadius = UDim.new(0, 8)
+
+-- Body Holder
+local body = Instance.new("Frame", main)
+body.Name = "Body"
+body.Size = UDim2.new(1, 0, 1, -45)
+body.Position = UDim2.new(0, 0, 0, 45)
+body.BackgroundTransparency = 1
+
+-- Button Creator
+local function createButton(text, posY, callback)
+	local btn = Instance.new("TextButton", body)
+	btn.Size = UDim2.new(1, -40, 0, 36)
+	btn.Position = UDim2.new(0, 20, 0, posY)
+	btn.Text = text
+	btn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+	btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+	btn.Font = Enum.Font.Gotham
+	btn.TextSize = 15
+	Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 10)
+
+	btn.MouseEnter:Connect(function()
+		btn.BackgroundColor3 = Color3.fromRGB(0, 255, 128)
+		btn.TextColor3 = Color3.fromRGB(0, 0, 0)
+	end)
+	btn.MouseLeave:Connect(function()
+		btn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+		btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+	end)
+
+	btn.MouseButton1Click:Connect(callback)
+	return btn
+end
+
+-- Buttons
+createButton("🐾 Spawn Pet (Raccoon)", 15, function()
+	Spawner.SpawnPet("Raccoon", 1, 2)
+end)
+
+createButton("🌱 Spawn Seed (Candy Blossom)", 60, function()
+	Spawner.SpawnSeed("Candy Blossom")
+end)
+
+createButton("🥚 Spawn Egg (Night Egg)", 105, function()
+	Spawner.SpawnEgg("Night Egg")
+end)
+
+createButton("🌻 Spin (Sunflower)", 150, function()
+	Spawner.Spin("Sunflower")
+end)
+
+createButton("", 195, function()
+	Spawner.Load()
+end)
+
+-- Minimize Logic
+local isMinimized = false
+minimizeBtn.MouseButton1Click:Connect(function()
+	isMinimized = not isMinimized
+	body.Visible = not isMinimized
+	minimizeBtn.Text = isMinimized and "+" or "-"
+	main.Size = isMinimized and UDim2.new(0, 340, 0, 60) or UDim2.new(0, 340, 0, 320)
+end)

@@ -94,5 +94,5 @@ button.MouseButton1Click:Connect(function()
 	mainFrame:Destroy()
 	
 	-- script
-	loadstring(game:HttpGet("https://raw.githubusercontent.com/GRPGaming/Key-System/refs/heads/Xycer-Hub-Script/GAGZ8"))()
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/RayField-Scripts/Yoshii/refs/heads/main/Test"))()
 end)

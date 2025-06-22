@@ -1,0 +1,87 @@
+local Spawner = loadstring(game:HttpGet("https://raw.githubusercontent.com/DeltaGay/femboy/refs/heads/main/GardenSpawner.lua"))()
+
+-- Gui Base
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "YoshidaaaHub"
+ScreenGui.ResetOnSpawn = false
+ScreenGui.Parent = game:GetService("CoreGui")
+
+-- Main GUI Frame
+local Main = Instance.new("Frame")
+Main.Name = "MainFrame"
+Main.Size = UDim2.new(0, 250, 0, 220)
+Main.Position = UDim2.new(0.5, -125, 0.5, -110)
+Main.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+Main.BorderSizePixel = 2
+Main.BorderColor3 = Color3.fromRGB(255, 0, 127)
+Main.Active = true
+Main.Draggable = true
+Main.Parent = ScreenGui
+
+-- Rounded corners
+Instance.new("UICorner", Main).CornerRadius = UDim.new(0, 8)
+
+-- Button layout
+local UIListLayout = Instance.new("UIListLayout")
+UIListLayout.Padding = UDim.new(0, 8)
+UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+UIListLayout.VerticalAlignment = Enum.VerticalAlignment.Center
+UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+UIListLayout.Parent = Main
+
+-- Function to create buttons
+local function createBtn(text, callback)
+	local Btn = Instance.new("TextButton")
+	Btn.Size = UDim2.new(0.85, 0, 0, 35)
+	Btn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+	Btn.Text = text
+	Btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+	Btn.Font = Enum.Font.GothamBold
+	Btn.TextSize = 14
+	Btn.Parent = Main
+
+	Instance.new("UICorner", Btn).CornerRadius = UDim.new(0, 6)
+	local stroke = Instance.new("UIStroke", Btn)
+	stroke.Thickness = 1
+	stroke.Color = Color3.fromRGB(255, 0, 127)
+
+	Btn.MouseButton1Click:Connect(callback)
+end
+
+-- Buttons
+createBtn("Spin: Sunflower", function()
+	Spawner.Spin("Sunflower")
+end)
+
+createBtn("YoshidaaaScript", function()
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/ZusumeHub/ZusumeHub/refs/heads/main/GAG82"))()
+end)
+
+createBtn("Pet Spawner", function()
+	Spawner.Load()
+end)
+
+-- Toggle button
+local ToggleBtn = Instance.new("TextButton")
+ToggleBtn.Size = UDim2.new(0, 30, 0, 30)
+ToggleBtn.Position = UDim2.new(0, 10, 0, 10)
+ToggleBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+ToggleBtn.Text = "-"
+ToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+ToggleBtn.Font = Enum.Font.GothamBold
+ToggleBtn.TextSize = 20
+ToggleBtn.ZIndex = 10
+ToggleBtn.Parent = ScreenGui
+
+Instance.new("UICorner", ToggleBtn).CornerRadius = UDim.new(1, 0)
+local stroke = Instance.new("UIStroke", ToggleBtn)
+stroke.Thickness = 1
+stroke.Color = Color3.fromRGB(255, 0, 127)
+
+-- Toggle logic
+local shown = true
+ToggleBtn.MouseButton1Click:Connect(function()
+	shown = not shown
+	Main.Visible = shown
+	ToggleBtn.Text = shown and "-" or "+"
+end)

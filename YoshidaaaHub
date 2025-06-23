@@ -93,6 +93,6 @@ button.MouseButton1Click:Connect(function()
 	blur:Destroy()
 	mainFrame:Destroy()
 	
-	-- script
- loadstring(game:HttpGet("https://raw.githubusercontent.com/RayField-Scripts/Yoshii/refs/heads/main/Script2"))()
+	-- Script
+ loadstring(game:HttpGet("https://raw.githubusercontent.com/RayField-Scripts/YoshiiHub/main/All%20in%20one"))()
 end)

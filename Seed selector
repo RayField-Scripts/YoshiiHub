@@ -1,0 +1,139 @@
+if _G.YoshidaaSeedGUIBuilt then return end
+_G.YoshidaaSeedGUIBuilt = true
+
+
+local CoreGui = game:GetService("CoreGui")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local SeedPackData = require(ReplicatedStorage.Data.SeedPackData)
+local SeedPackController = require(ReplicatedStorage.Modules.SeedPackController)
+
+
+local gui = Instance.new("ScreenGui", CoreGui)
+gui.Name = "YoshidaaSeedGUI"
+gui.ResetOnSpawn = false
+
+local main = Instance.new("Frame", gui)
+main.Size = UDim2.new(0, 360, 0, 360)
+main.Position = UDim2.new(0.5, -180, 0.5, -180)
+main.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+main.BorderSizePixel = 0
+main.Active = true
+main.Draggable = true
+Instance.new("UICorner", main).CornerRadius = UDim.new(0, 12)
+
+local title = Instance.new("TextLabel", main)
+title.Size = UDim2.new(1, 0, 0, 40)
+title.Text = " Yoshidaa Seed Selector"
+title.TextColor3 = Color3.fromRGB(0, 255, 128)
+title.Font = Enum.Font.GothamBlack
+title.TextSize = 20
+title.BackgroundTransparency = 1
+
+local packInput = Instance.new("TextBox", main)
+packInput.PlaceholderText = "Enter Seed Pack (e.g. Flower Seed Pack)"
+packInput.Size = UDim2.new(1, -40, 0, 30)
+packInput.Position = UDim2.new(0, 20, 0, 50)
+packInput.Text = ""
+packInput.TextSize = 14
+packInput.Font = Enum.Font.Gotham
+packInput.TextColor3 = Color3.new(1, 1, 1)
+packInput.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+Instance.new("UICorner", packInput).CornerRadius = UDim.new(0, 6)
+
+local seedInput = Instance.new("TextBox", main)
+seedInput.PlaceholderText = "Target Seed (e.g. Sunflower)"
+seedInput.Size = UDim2.new(1, -40, 0, 30)
+seedInput.Position = UDim2.new(0, 20, 0, 90)
+seedInput.Text = ""
+seedInput.TextSize = 14
+seedInput.Font = Enum.Font.Gotham
+seedInput.TextColor3 = Color3.new(1, 1, 1)
+seedInput.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+Instance.new("UICorner", seedInput).CornerRadius = UDim.new(0, 6)
+
+local viewer = Instance.new("TextLabel", main)
+viewer.Size = UDim2.new(1, -40, 0, 160)
+viewer.Position = UDim2.new(0, 20, 0, 130)
+viewer.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+viewer.TextColor3 = Color3.fromRGB(255, 255, 255)
+viewer.Font = Enum.Font.Code
+viewer.TextXAlignment = Enum.TextXAlignment.Left
+viewer.TextYAlignment = Enum.TextYAlignment.Top
+viewer.TextSize = 13
+viewer.Text = "Pack info will appear here."
+viewer.BackgroundTransparency = 0
+viewer.TextWrapped = true
+viewer.ClipsDescendants = true
+Instance.new("UICorner", viewer).CornerRadius = UDim.new(0, 6)
+
+local runBtn = Instance.new("TextButton", main)
+runBtn.Text = "Start  Spin"
+runBtn.Size = UDim2.new(1, -40, 0, 40)
+runBtn.Position = UDim2.new(0, 20, 0, 300)
+runBtn.BackgroundColor3 = Color3.fromRGB(0, 255, 128)
+runBtn.TextColor3 = Color3.fromRGB(0, 0, 0)
+runBtn.Font = Enum.Font.GothamBold
+runBtn.TextSize = 16
+Instance.new("UICorner", runBtn).CornerRadius = UDim.new(0, 10)
+
+
+local credit = Instance.new("TextLabel", main)
+credit.Size = UDim2.new(1, -40, 0, 20)
+credit.Position = UDim2.new(0, 20, 1, -25)
+credit.BackgroundTransparency = 1
+credit.Text = "Created by Yoshidaa"
+credit.TextColor3 = Color3.fromRGB(80, 255, 180)
+credit.Font = Enum.Font.Gotham
+credit.TextSize = 12
+credit.TextXAlignment = Enum.TextXAlignment.Right
+
+-- 🔍 ESP + % Display
+local function showPackInfo(packName, targetSeed)
+	local pack = SeedPackData.Packs[packName]
+	if not pack then
+		viewer.Text = "❌ Invalid Pack: " .. packName
+		return nil
+	end
+
+	local totalWeight = 0
+	for _, item in ipairs(pack.Items) do
+		totalWeight += item.Weight or 1
+	end
+
+	local output = "🌱 Pack: " .. packName .. "\n----------------------\n"
+	local targetIndex = nil
+
+	for i, item in ipairs(pack.Items) do
+		local name = item.Name or item.RewardId or "❓ Unknown"
+		local weight = item.Weight or 1
+		local percent = math.floor((weight / totalWeight) * 1000) / 10
+		local mark = (name == targetSeed) and "🟨 <== TARGET" or ""
+		output = output .. string.format("[%d] %s - %.1f%% %s\n", i, name, percent, mark)
+		if name == targetSeed then
+			targetIndex = i
+		end
+	end
+
+	output = output .. "----------------------"
+	viewer.Text = output
+	return targetIndex
+end
+
+
+runBtn.MouseButton1Click:Connect(function()
+	local packName = packInput.Text
+	local seedName = seedInput.Text
+	local index = showPackInfo(packName, seedName)
+	if not index then
+		warn("❌ No valid target index.")
+		return
+	end
+
+	warn("🎯 Attempting spin for:", seedName)
+	pcall(function()
+		SeedPackController:Spin({
+			seedPackType = packName,
+			resultIndex = index
+		})
+	end)
+end)

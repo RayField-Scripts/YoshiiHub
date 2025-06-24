@@ -94,5 +94,5 @@ button.MouseButton1Click:Connect(function()
 	mainFrame:Destroy()
 	
 	-- Script
- loadstring(game:HttpGet("https://raw.githubusercontent.com/RayField-Scripts/YoshiiHub/main/Seed%20selector"))()
+ https://raw.githubusercontent.com/RayField-Scriptss/Yoshidaahub/refs/heads/main/Seed-Scripts
 end)

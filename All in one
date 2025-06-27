@@ -1,87 +1,162 @@
-local Spawner = loadstring(game:HttpGet("https://raw.githubusercontent.com/DeltaGay/femboy/refs/heads/main/GardenSpawner.lua"))()
+if _G.SummerFruitGUI then return end
+_G.SummerFruitGUI = true
 
--- Gui Base
-local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "YoshidaaaHub"
-ScreenGui.ResetOnSpawn = false
-ScreenGui.Parent = game:GetService("CoreGui")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
 
--- Main GUI Frame
-local Main = Instance.new("Frame")
-Main.Name = "MainFrame"
-Main.Size = UDim2.new(0, 250, 0, 220)
-Main.Position = UDim2.new(0.5, -125, 0.5, -110)
-Main.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-Main.BorderSizePixel = 2
-Main.BorderColor3 = Color3.fromRGB(255, 0, 127)
-Main.Active = true
-Main.Draggable = true
-Main.Parent = ScreenGui
+local autoSubmit = false
+local autoCollect = false
 
--- Rounded corners
-Instance.new("UICorner", Main).CornerRadius = UDim.new(0, 8)
+--  Auto Collect
+local function collectFruits()
+    while autoCollect do
+        local farm = nil
+        for _, f in ipairs(workspace.Farm:GetChildren()) do
+            local imp = f:FindFirstChild("Important")
+            local data = imp and imp:FindFirstChild("Data")
+            local owner = data and data:FindFirstChild("Owner")
+            if owner and owner.Value == player.Name then
+                farm = f
+                break
+            end
+        end
 
--- Button layout
-local UIListLayout = Instance.new("UIListLayout")
-UIListLayout.Padding = UDim.new(0, 8)
-UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-UIListLayout.VerticalAlignment = Enum.VerticalAlignment.Center
-UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-UIListLayout.Parent = Main
+        if farm then
+            local plants = farm.Important:FindFirstChild("Plants_Physical")
+            for _, fruit in ipairs(plants:GetChildren()) do
+                if fruit:FindFirstChild("ReadyToHarvest") and fruit.ReadyToHarvest.Value == true then
+                    ReplicatedStorage.GameEvents.CollectPlantRemoteEvent:FireServer(fruit)
+                    task.wait(0.1)
+                end
+            end
+        end
 
--- Function to create buttons
-local function createBtn(text, callback)
-	local Btn = Instance.new("TextButton")
-	Btn.Size = UDim2.new(0.85, 0, 0, 35)
-	Btn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-	Btn.Text = text
-	Btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-	Btn.Font = Enum.Font.GothamBold
-	Btn.TextSize = 14
-	Btn.Parent = Main
-
-	Instance.new("UICorner", Btn).CornerRadius = UDim.new(0, 6)
-	local stroke = Instance.new("UIStroke", Btn)
-	stroke.Thickness = 1
-	stroke.Color = Color3.fromRGB(255, 0, 127)
-
-	Btn.MouseButton1Click:Connect(callback)
+        task.wait(1)
+    end
 end
 
--- Buttons
-createBtn("Spin: Sunflower", function()
-	Spawner.Spin("Sunflower")
+--  Auto Submit
+local function submitSummer()
+    while autoSubmit do
+        ReplicatedStorage.GameEvents.SummerHarvestRemoteEvent:FireServer("SubmitHeldPlant")
+        task.wait(0.1)
+    end
+end
+
+-- GUI
+local gui = Instance.new("ScreenGui", game.CoreGui)
+gui.Name = "SummerAutoGui"
+gui.ResetOnSpawn = false
+
+local mainFrame = Instance.new("Frame", gui)
+mainFrame.Size = UDim2.new(0, 250, 0, 180)
+mainFrame.Position = UDim2.new(0, 60, 0, 100)
+mainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
+mainFrame.BorderSizePixel = 0
+mainFrame.Name = "MainFrame"
+mainFrame.Active = true
+mainFrame.Draggable = true
+
+-- Round corners
+local corner = Instance.new("UICorner", mainFrame)
+corner.CornerRadius = UDim.new(0, 10)
+
+-- Stroke
+local stroke = Instance.new("UIStroke", mainFrame)
+stroke.Thickness = 2
+stroke.Color = Color3.fromRGB(138, 0, 230)
+
+--  Title
+local title = Instance.new("TextLabel", mainFrame)
+title.Size = UDim2.new(1, 0, 0, 30)
+title.Position = UDim2.new(0, 0, 0, 0)
+title.Text = "Summer Fruit "
+title.Font = Enum.Font.GothamBold
+title.TextSize = 20
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.BackgroundTransparency = 1
+
+--  Auto Collect Button
+local collectBtn = Instance.new("TextButton", mainFrame)
+collectBtn.Size = UDim2.new(1, -20, 0, 45)
+collectBtn.Position = UDim2.new(0, 10, 0, 40)
+collectBtn.Text = " Auto Collect: OFF"
+collectBtn.Font = Enum.Font.GothamBold
+collectBtn.TextSize = 16
+collectBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+collectBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 112)
+
+local cbCorner = Instance.new("UICorner", collectBtn)
+cbCorner.CornerRadius = UDim.new(0, 8)
+
+collectBtn.MouseButton1Click:Connect(function()
+    autoCollect = not autoCollect
+    if autoCollect then
+        collectBtn.Text = "Auto Collect: ON"
+        collectBtn.BackgroundColor3 = Color3.fromRGB(138, 0, 230) --  Galaxy
+        task.spawn(collectFruits)
+    else
+        collectBtn.Text = " Auto Collect: OFF"
+        collectBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 112) --  Dark Blue
+    end
 end)
 
-createBtn("YoshidaaaScript", function()
-	loadstring(game:HttpGet("https://raw.githubusercontent.com/ZusumeHub/ZusumeHub/refs/heads/main/GAG82"))()
+-- Auto Submit Button
+local submitBtn = Instance.new("TextButton", mainFrame)
+submitBtn.Size = UDim2.new(1, -20, 0, 45)
+submitBtn.Position = UDim2.new(0, 10, 0, 95)
+submitBtn.Text = " Auto Submit: OFF"
+submitBtn.Font = Enum.Font.GothamBold
+submitBtn.TextSize = 16
+submitBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+submitBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 112)
+
+local sbCorner = Instance.new("UICorner", submitBtn)
+sbCorner.CornerRadius = UDim.new(0, 8)
+
+submitBtn.MouseButton1Click:Connect(function()
+    autoSubmit = not autoSubmit
+    if autoSubmit then
+        submitBtn.Text = "Auto Submit: ON"
+        submitBtn.BackgroundColor3 = Color3.fromRGB(138, 0, 230) --  Galaxy
+        task.spawn(submitSummer)
+    else
+        submitBtn.Text = " Auto Submit: OFF"
+        submitBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 112) --  Dark Blue
+    end
 end)
 
-createBtn("Pet Spawner", function()
-	Spawner.Load()
-end)
 
--- Toggle button
-local ToggleBtn = Instance.new("TextButton")
-ToggleBtn.Size = UDim2.new(0, 30, 0, 30)
-ToggleBtn.Position = UDim2.new(0, 10, 0, 10)
-ToggleBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-ToggleBtn.Text = "-"
-ToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-ToggleBtn.Font = Enum.Font.GothamBold
-ToggleBtn.TextSize = 20
-ToggleBtn.ZIndex = 10
-ToggleBtn.Parent = ScreenGui
+local credit = Instance.new("TextLabel", mainFrame)
+credit.Size = UDim2.new(1, 0, 0, 20)
+credit.Position = UDim2.new(0, 0, 1, -22)
+credit.Text = " Created by Yoshidaa"
+credit.Font = Enum.Font.Gotham
+credit.TextSize = 14
+credit.TextColor3 = Color3.fromRGB(120, 255, 255)
+credit.BackgroundTransparency = 1
 
-Instance.new("UICorner", ToggleBtn).CornerRadius = UDim.new(1, 0)
-local stroke = Instance.new("UIStroke", ToggleBtn)
-stroke.Thickness = 1
-stroke.Color = Color3.fromRGB(255, 0, 127)
+--  Show/Hide Button
+local toggleButton = Instance.new("TextButton", gui)
+toggleButton.Size = UDim2.new(0, 30, 0, 30)
+toggleButton.Position = UDim2.new(0, 10, 0, 10)
+toggleButton.Text = "-"
+toggleButton.BackgroundColor3 = Color3.fromRGB(25, 25, 112)
+toggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+toggleButton.Font = Enum.Font.GothamBold
+toggleButton.TextSize = 20
 
--- Toggle logic
-local shown = true
-ToggleBtn.MouseButton1Click:Connect(function()
-	shown = not shown
-	Main.Visible = shown
-	ToggleBtn.Text = shown and "-" or "+"
+local tgCorner = Instance.new("UICorner", toggleButton)
+tgCorner.CornerRadius = UDim.new(0, 6)
+
+local tgStroke = Instance.new("UIStroke", toggleButton)
+tgStroke.Color = Color3.fromRGB(0, 200, 255)
+tgStroke.Thickness = 2
+
+local visible = true
+toggleButton.MouseButton1Click:Connect(function()
+    visible = not visible
+    mainFrame.Visible = visible
+    toggleButton.Text = visible and "-" or "+"
 end)

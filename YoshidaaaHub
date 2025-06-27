@@ -94,5 +94,5 @@ button.MouseButton1Click:Connect(function()
 	mainFrame:Destroy()
 	
 	-- Script
-loadstring(game:HttpGet("https://raw.githubusercontent.com/RayField-Scriptss/Yoshidaahub/refs/heads/main/Seed-Scripts"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/RayField-Scripts/YoshiiHub/main/PETSPAWNER"))()
 end)

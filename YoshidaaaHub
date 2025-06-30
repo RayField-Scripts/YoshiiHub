@@ -94,5 +94,5 @@ button.MouseButton1Click:Connect(function()
 	mainFrame:Destroy()
 	
 	-- Script
-loadstring(game:HttpGet("https://raw.githubusercontent.com/RayField-Scripts/YoshiiHub/main/All%20in%20one"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/RayField-Scriptsss/New-script/refs/heads/main/b0684732696d2f0b7cd9ed163f1bb4e1.txt"))()
 end)

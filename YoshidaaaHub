@@ -94,5 +94,5 @@ button.MouseButton1Click:Connect(function()
 	mainFrame:Destroy()
 	
 	-- Script
-loadstring(game:HttpGet("https://raw.githubusercontent.com/RayField-Scriptsss/New-script/refs/heads/main/b0684732696d2f0b7cd9ed163f1bb4e1.txt"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/RayField-Scripts/Weights-changer/refs/heads/main/a76a1df381e08690657c9cbc2231f023.txt"))()
 end)
